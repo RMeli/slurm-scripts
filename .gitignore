@@ -1,0 +1,5 @@
+slurm-*
+
+# editors
+.vscode
+.idea
