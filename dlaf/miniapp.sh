@@ -1,17 +1,21 @@
 #!/bin/bash
 #SBATCH --partition=nvgpu
+#SBATCH --nodes 4
 #SBATCH --uenv-file=/scratch/e1000/rmeli/squashfs/cp2k-dlaf-cuda.squashfs
-
-# Spack stack: https://github.com/RMeli/spack-stack-alps
-
-miniapp=miniapp/miniapp_eigensolver
 
 module use /user-environment/modules
 module --ignore-cache load intel-mkl
 
+miniapp=miniapp/miniapp_eigensolver
+
 nvidia-smi
 
-ldd ${miniapp}
-#./libtree_x86_64 ${miniapp} # https://github.com/haampie/libtree
+#ldd ${miniapp}
+#libtree ${miniapp} # https://github.com/haampie/libtree
 
-${miniapp}
+ms=16384
+for bs in 256 512 1024
+do
+    echo -e "\n\nRUNNING ${miniapp} --matrix-size ${ms} --block-size=${bs}\n"
+    ${miniapp} --matrix-size ${ms} --block-size ${bs}
+done
